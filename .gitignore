@@ -1,0 +1,6 @@
+*.csv
+*.json
+*.pdf
+*.odt
+dist
+__pycache__
