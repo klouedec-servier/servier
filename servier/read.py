@@ -11,8 +11,8 @@ from os.path import join
 # project import
 from servier.data import DATA_SOURCE
 
+
 def read_drugs():
-    filename = join(DATA_SOURCE, 'drugs.csv')
+    filename = join(DATA_SOURCE, "drugs.csv")
     df = pd.read_csv(filename)
-    print(df)
     return df
