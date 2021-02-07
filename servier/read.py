@@ -30,3 +30,8 @@ def read_pubmed_json():
     with open(filename, "r") as f:
         pubmed = json.load(f)
     return pubmed
+
+def read_clinical_trials():
+    filename = join(DATA_SOURCE, "clinical_trials.csv")
+    df = pd.read_csv(filename)
+    return df
