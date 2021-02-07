@@ -4,7 +4,7 @@
 Main file for reading raw data
 """
 
-# import from standart library
+# import from standard library
 import pandas as pd
 from os.path import join
 import json
@@ -13,25 +13,20 @@ import json
 from servier.data import DATA_SOURCE
 
 
-def read_drugs():
-    filename = join(DATA_SOURCE, "drugs.csv")
+def read_csv(filename: str) -> pd.DataFrame:
+    """
+    Read csv file located in the data folder
+    """
+    filename = join(DATA_SOURCE, filename)
     df = pd.read_csv(filename)
     return df
 
 
-def read_pubmed_csv():
-    filename = join(DATA_SOURCE, "pubmed.csv")
-    df = pd.read_csv(filename)
-    return df
-
-
-def read_pubmed_json():
-    filename = join(DATA_SOURCE, "pubmed.json")
+def read_json(filename: str) -> pd.DataFrame:
+    """
+    Read json file located in the data folder
+    """
+    filename = join(DATA_SOURCE, filename)
     with open(filename, "r") as f:
         pubmed = json.load(f)
     return pubmed
-
-def read_clinical_trials():
-    filename = join(DATA_SOURCE, "clinical_trials.csv")
-    df = pd.read_csv(filename)
-    return df
