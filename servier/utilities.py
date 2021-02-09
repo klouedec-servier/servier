@@ -18,7 +18,7 @@ from servier.data import DATA_SOURCE
 
 def save_csv(df: pd.DataFrame, output_name: str) -> None:
     filename = join(DATA_SOURCE, output_name)
-    df.to_csv(output_name, index=False)
+    df.to_csv(filename, index=False)
 
 
 def remove_special_character(s: Union[str, float]) -> Union[str, float]:
