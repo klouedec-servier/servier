@@ -7,11 +7,16 @@ Main file for utilities function
 # import from standard library
 from typing import Union
 import pandas as pd
+from os.path import join
+
+# import from project
+
+from servier.data import DATA_SOURCE
 
 
 def save_csv(df: pd.DataFrame, output_name: str) -> None:
     filename = join(DATA_SOURCE, output_name)
-    df = pd.to_csv(output_name, index=False)
+    df.to_csv(output_name, index=False)
 
 
 def remove_special_character(s: Union[str, float]) -> Union[str, float]:

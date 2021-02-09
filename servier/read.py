@@ -22,11 +22,11 @@ def read_csv(filename: str) -> pd.DataFrame:
     return df
 
 
-def read_json(filename: str) -> pd.DataFrame:
+def read_yaml(filename: str) -> pd.DataFrame:
     """
     Read json file located in the data folder
     """
     filename = join(DATA_SOURCE, filename)
-    with open(filename, "r") as f:
-        pubmed = json.load(f)
+    with open(filename) as f:
+        pubmed = yaml.load(f)
     return pubmed

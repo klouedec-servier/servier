@@ -6,12 +6,12 @@ Main file for cleaning data
 
 # import from standard library
 import pandas as pd
-import scipy as sp
+from scipy import interpolate
 from functools import reduce
 
 # import project library
-from servier.read import read_csv, read_json
-from servier.utilities import remove_special_character
+from servier.read import read_yaml, read_csv
+from servier.utilities import remove_special_character, save_csv
 
 def clean_clinical_trials() -> None:
     """ Clean the clinical_trials DataFrame """
@@ -34,7 +34,7 @@ def clean_drugs() -> None:
 def clean_pubmed_csv() -> pd.DataFrame:
     """ Clean the pubmed_csv DataFrame """
     pubmed = read_csv("pubmed.csv")
-    ct['date'] = pd.to_datetime(ct['date'])
+    pubmed['date'] = pd.to_datetime(pubmed['date'])
     return pubmed
 
 
@@ -52,12 +52,12 @@ def clean_pubmed_yaml() -> pd.DataFrame:
     pubmed['id'] = pd.to_numeric(pubmed['id'], errors='coerce').astype('Float64')
     # Linear extrapolation of id
     # https://stackoverflow.com/questions/31332981/pandas-interpolation-replacing-nans-after-the-last-data-point-but-not-before-th/38325187
-    pubmed_id_no_nan = pubdmed.id.dropna()
-    func = sp.interpolate.interp1d(pubmed_id_no_nan.index.values,
+    pubmed_id_no_nan = pubmed.id.dropna()
+    func = interpolate.interp1d(pubmed_id_no_nan.index.values,
                                    pubmed_id_no_nan.values,
                                    kind='linear',
                                    bounds_error=False)
-    pubdmed['id'] = pd.Series(my_extrapolate_func(func, pubmed.index.values), index=pubmed.index)
+    pubmed['id'] = pd.Series(my_extrapolate_func(func, pubmed.index.values), index=pubmed.index)
     return pubmed
 
 
