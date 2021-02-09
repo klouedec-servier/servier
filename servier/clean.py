@@ -7,19 +7,18 @@ Main file for cleaning data
 # import from standard library
 import pandas as pd
 from scipy import interpolate
-from functools import reduce
 
 # import project library
 from servier.read import read_yaml, read_csv
 from servier.utilities import remove_special_character, save_csv
+from servier.utilities import replace_punctuation
 
 def clean_clinical_trials() -> None:
     """ Clean the clinical_trials DataFrame """
     ct = read_csv("clinical_trials.csv")
-    ct["journal"] = ct["journal"].apply(remove_special_character)
-    ct["journal"] = ct["journal"].str.lower()
     ct["scientific_title"] = ct["scientific_title"].apply(remove_special_character)
     ct["scientific_title"] = ct["scientific_title"].str.lower()
+    ct["scientific_title"] = ct["scientific_title"].apply(replace_punctuation)
     ct['date'] = pd.to_datetime(ct['date'])
     ct = ct.groupby(["date", "scientific_title"], as_index=False).first()
     save_csv(ct, 'clinical_trials_cleaned.csv')
@@ -30,12 +29,6 @@ def clean_drugs() -> None:
     drugs = read_csv("drugs.csv")
     drugs["drug"] = drugs["drug"].str.lower()
     save_csv(drugs, "drugs_cleaned.csv")
-
-def clean_pubmed_csv() -> pd.DataFrame:
-    """ Clean the pubmed_csv DataFrame """
-    pubmed = read_csv("pubmed.csv")
-    pubmed['date'] = pd.to_datetime(pubmed['date'])
-    return pubmed
 
 
 def my_extrapolate_func(scipy_interpolate_func, new_x):
@@ -65,7 +58,10 @@ def clean_pubmed() -> None:
     """
     Merge cleaned pubmed_csv and pubmed_yaml
     """
-    pubmed_csv = clean_pubmed_csv()
+    pubmed_csv = read_csv("pubmed.csv")
     pubmed_json = clean_pubmed_yaml()
     pubmed = pd.concat([pubmed_csv, pubmed_json])
+    pubmed['date'] = pd.to_datetime(pubmed['date'])
+    pubmed['title'] = pubmed['title'].str.lower()
+    pubmed['title'] = pubmed['title'].apply(replace_punctuation)
     save_csv(pubmed, "pubmed_cleaned.csv")

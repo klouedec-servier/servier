@@ -5,9 +5,11 @@ Main file for utilities function
 """
 
 # import from standard library
+from functools import reduce
+from os.path import join
 from typing import Union
 import pandas as pd
-from os.path import join
+import string
 
 # import from project
 
@@ -33,5 +35,10 @@ def remove_special_character(s: Union[str, float]) -> Union[str, float]:
     chars_to_remove = ['\\xc3', '\\x28', '\\xb1']
     repls = tuple((char, "") for char in chars_to_remove)
     s = reduce(lambda a, kv: a.replace(*kv), repls, s)
+    return s
+
+
+def replace_punctuation(s):
+    s = s.translate(str.maketrans(string.punctuation, ' ' * len(string.punctuation)))
     return s
 
