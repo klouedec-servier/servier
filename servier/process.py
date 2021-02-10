@@ -11,6 +11,7 @@ This version is lighter in storage than a reverse index solution as we only stor
 from collections import Counter
 import glob
 import pandas as pd
+from typing import Union
 
 # import from the library
 from servier.utilities import save_csv
@@ -19,14 +20,14 @@ from servier.utilities import save_csv
 class TrieNode:
     """A node in the trie structure"""
 
-    def __init__(self, char):
+    def __init__(self, char: str) -> None:
         # the character stored in this node
         self.char = char
 
         # whether this can be the end of a word
         self.is_end = False
 
-        self.documents = set()
+        self.publications = set()
 
         # a dictionary of child nodes
         # keys are characters, values are nodes
@@ -42,11 +43,10 @@ class Trie(object):
         The root node does not store any character
         """
         self.root = TrieNode("")
-        self.documents = set()
 
-    def insert(self, word, document):
+    def insert(self, word: str, journal: str, date: str) -> None:
         """Insert a word into the trie"""
-        self.documents.add(document)
+        publication = (journal, date)
         node = self.root
 
         # Loop through each character in the word
@@ -63,10 +63,10 @@ class Trie(object):
 
         # Mark the end of a word
         node.is_end = True
-        node.documents.add(document)
+        node.publications.add(publication)
 
 
-    def query(self, x):
+    def query(self, x: str) -> list:
         """Given an input (a word), retrieve all documents stored in
         the trie containing that word
         """
@@ -82,14 +82,18 @@ class Trie(object):
                 # cannot found the prefix, return empty list
                 return []
         if node.is_end:
-            return list(node.documents)
+            return list(node.publications)
         else:
             return []
 
 
-def inject_articles(articles: Union(numpy.recarray, List, tuple))):
+def inject_articles(articles: Union[numpy.recarray, list, tuple])) -> Trie:
+    """
+    Inject documents into a trie structure.
+    Return a Trie object where word are ready to be queried.
+    """
     trie = Trie()
-    for journal, title in articles:
+    for journal, title, date in articles:
         for word in title.split():
-            trie.insert(word, journal)
+            trie.insert(word, journal, date)
     return trie
