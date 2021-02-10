@@ -14,7 +14,8 @@ import pandas as pd
 from typing import Union
 
 # import from the library
-from servier.utilities import save_csv, save_pickle, save_json
+from servier.utilities import read_csv, save_csv
+from servier.utilities import save_pickle, save_json, read_pickle
 
 # Inspired by https://albertauyeung.github.io/2020/06/15/python-trie.html
 class TrieNode:
@@ -86,12 +87,14 @@ class Trie(object):
             return []
 
 
-def inject_articles(articles: Union[numpy.recarray, list, tuple]) -> Trie:
+def inject_articles(articles: pd.DataFrame) -> Trie:
     """
     Inject documents into a trie structure.
     Return a Trie object where word are ready to be queried.
     """
     trie = Trie()
+    cols = ["id", "journal", "title", "date"]
+    articles = articles[cols].to_records(index=False)
     for id, journal, title, date in articles:
         for word in title.split():
             trie.insert(word, id, journal, date)
@@ -116,9 +119,8 @@ def drug_mentions(df: pd.DataFrame, publication_type) -> None:
     if publication_type == "pubmed":
         df = read_csv("pubmed_cleaned.csv")
     elif publication_type == "clinical_trial":
-        df = read_csv("clinical_trials.csv")
+        df = read_csv("clinical_trials_cleaned.csv")
     drugs = read_csv("drugs_cleaned.csv")
-    df = df[["id", "journal", "title", "date"]].to_records()
     trie = inject_articles(df)
     res = {}
     for row in drugs.iterrows():
@@ -126,11 +128,12 @@ def drug_mentions(df: pd.DataFrame, publication_type) -> None:
         drug = row[1]["drug"]
         mentions = trie.query(drug)
         for id, journal, date in mentions:
+            match = (int(id), atccode, date)
             if journal not in res:
                 res[journal] = {}
-                res[journal][publication_type] = [(id, atccode, date)]
+                res[journal][publication_type] = [match]
             else:
-                res[journal][publication_type].append((id, atccode, date))
+                res[journal][publication_type].append(match)
     filename = "{}_mentions.pickle".format(publication_type)
     save_pickle(res, filename)
 
