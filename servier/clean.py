@@ -13,16 +13,17 @@ from servier.utilities import read_yaml, read_csv
 from servier.utilities import remove_special_character, save_csv
 from servier.utilities import replace_punctuation
 
+
 def clean_clinical_trials() -> None:
     """ Clean the clinical_trials DataFrame """
     ct = read_csv("clinical_trials.csv")
-    ct.rename(columns={'scientific_title': 'title'}, inplace=True)
+    ct.rename(columns={"scientific_title": "title"}, inplace=True)
     ct["title"] = ct["title"].apply(remove_special_character)
     ct["title"] = ct["title"].str.lower()
     ct["title"] = ct["title"].apply(replace_punctuation)
-    ct['date'] = pd.to_datetime(ct['date'])
+    ct["date"] = pd.to_datetime(ct["date"])
     ct = ct.groupby(["date", "title"], as_index=False).first()
-    save_csv(ct, 'clinical_trials_cleaned.csv')
+    save_csv(ct, "clinical_trials_cleaned.csv")
 
 
 def clean_drugs() -> None:
@@ -43,16 +44,20 @@ def clean_pubmed_yaml() -> pd.DataFrame:
     """ Clean the pubmed_json DataFrame """
     pubmed = read_yaml("pubmed.json")
     pubmed = pd.DataFrame(pubmed)
-    pubmed['id'] = pd.to_numeric(pubmed['id'], errors='coerce').astype('Float64')
+    pubmed["id"] = pd.to_numeric(pubmed["id"], errors="coerce").astype("Float64")
     # Linear extrapolation of id
     # https://stackoverflow.com/questions/31332981/pandas-interpolation-replacing-nans-after-the-last-data-point-but-not-before-th/38325187
     pubmed_id_no_nan = pubmed.id.dropna()
-    func = interpolate.interp1d(pubmed_id_no_nan.index.values,
-                                   pubmed_id_no_nan.values,
-                                   kind='linear',
-                                   bounds_error=False)
-    pubmed['id'] = pd.Series(my_extrapolate_func(func, pubmed.index.values), index=pubmed.index)
-    pubmed['id'] = pubmed['id'].astype(int)
+    func = interpolate.interp1d(
+        pubmed_id_no_nan.index.values,
+        pubmed_id_no_nan.values,
+        kind="linear",
+        bounds_error=False,
+    )
+    pubmed["id"] = pd.Series(
+        my_extrapolate_func(func, pubmed.index.values), index=pubmed.index
+    )
+    pubmed["id"] = pubmed["id"].astype(int)
     return pubmed
 
 
@@ -63,7 +68,7 @@ def clean_pubmed() -> None:
     pubmed_csv = read_csv("pubmed.csv")
     pubmed_json = clean_pubmed_yaml()
     pubmed = pd.concat([pubmed_csv, pubmed_json])
-    pubmed['date'] = pd.to_datetime(pubmed['date'])
-    pubmed['title'] = pubmed['title'].str.lower()
-    pubmed['title'] = pubmed['title'].apply(replace_punctuation)
+    pubmed["date"] = pd.to_datetime(pubmed["date"])
+    pubmed["title"] = pubmed["title"].str.lower()
+    pubmed["title"] = pubmed["title"].apply(replace_punctuation)
     save_csv(pubmed, "pubmed_cleaned.csv")

@@ -44,7 +44,7 @@ class Trie(object):
         """
         self.root = TrieNode("")
 
-    def insert(self, word: str, id: Union(str, int), journal: str, date: str) -> None:
+    def insert(self, word: str, id: Union[str, int], journal: str, date: str) -> None:
         """Insert a word into the trie"""
         publication = (id, journal, date)
         node = self.root
@@ -64,7 +64,6 @@ class Trie(object):
         # Mark the end of a word
         node.is_end = True
         node.publications.add(publication)
-
 
     def query(self, x: str) -> list:
         """Given an input (a word), retrieve all documents stored in
@@ -87,7 +86,7 @@ class Trie(object):
             return []
 
 
-def inject_articles(articles: Union[numpy.recarray, list, tuple])) -> Trie:
+def inject_articles(articles: Union[numpy.recarray, list, tuple]) -> Trie:
     """
     Inject documents into a trie structure.
     Return a Trie object where word are ready to be queried.
@@ -114,17 +113,17 @@ def drug_mentions(df: pd.DataFrame, publication_type) -> None:
     TODO
     {'xxx'}
     """
-    if publication_type == 'pubmed':
-        df = read_csv('pubmed_cleaned.csv')
-    elif publication_type == 'clinical_trial':
-        df = read_csv('clinical_trials.csv')
-    drugs = read_csv('drugs_cleaned.csv')
-    df = df[['id', 'journal', 'title', 'date']].to_records()
+    if publication_type == "pubmed":
+        df = read_csv("pubmed_cleaned.csv")
+    elif publication_type == "clinical_trial":
+        df = read_csv("clinical_trials.csv")
+    drugs = read_csv("drugs_cleaned.csv")
+    df = df[["id", "journal", "title", "date"]].to_records()
     trie = inject_articles(df)
     res = {}
     for row in drugs.iterrows():
-        atccode = row[1]['atccode']
-        drug = row[1]['drug']
+        atccode = row[1]["atccode"]
+        drug = row[1]["drug"]
         mentions = trie.query(drug)
         for id, journal, date in mentions:
             if journal not in res:
@@ -140,25 +139,26 @@ def drug_mention_pubmed():
     """
     Compute drug mention on Medical publication
     """
-    pubmed = read_csv('pubmed_cleaned.csv')
-    drug_mentions(pubmed, 'pubmed')
+    pubmed = read_csv("pubmed_cleaned.csv")
+    drug_mentions(pubmed, "pubmed")
 
 
 def drug_mention_clinical_trial():
     """
     Compute drug mention on Medical publication
     """
-    ct = read_csv('clinical_trials_cleaned.csv')
-    drug_mentions(ct, 'clinical_trial')
+    ct = read_csv("clinical_trials_cleaned.csv")
+    drug_mentions(ct, "clinical_trial")
 
 
 def merge_pubmed_clinical_trial():
     """
     Return the final json output
     """
-    pubmed = read_pickle('pubmed_mentions.pickle')
-    ct = read_pickle('clinical_trial_mentions.pickle')
+    pubmed = read_pickle("pubmed_mentions.pickle")
+    ct = read_pickle("clinical_trial_mentions.pickle")
     res = {}
+
     def fill_res(d, publication_type):
         for journal, match in d.items():
             if journal in res:
@@ -166,6 +166,7 @@ def merge_pubmed_clinical_trial():
             else:
                 res[journal] = {}
                 res[journal][publication_type] = match
-    fill_res(pubmed, 'pubmed')
-    fill_res(ct, 'clinical_trial')
-    save_json(res, 'output.json')
+
+    fill_res(pubmed, "pubmed")
+    fill_res(ct, "clinical_trial")
+    save_json(res, "output.json")
