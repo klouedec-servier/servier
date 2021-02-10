@@ -16,11 +16,12 @@ from servier.utilities import replace_punctuation
 def clean_clinical_trials() -> None:
     """ Clean the clinical_trials DataFrame """
     ct = read_csv("clinical_trials.csv")
-    ct["scientific_title"] = ct["scientific_title"].apply(remove_special_character)
-    ct["scientific_title"] = ct["scientific_title"].str.lower()
-    ct["scientific_title"] = ct["scientific_title"].apply(replace_punctuation)
+    ct.rename(columns={'scientific_title': 'title'}, inplace=True)
+    ct["title"] = ct["title"].apply(remove_special_character)
+    ct["title"] = ct["title"].str.lower()
+    ct["title"] = ct["title"].apply(replace_punctuation)
     ct['date'] = pd.to_datetime(ct['date'])
-    ct = ct.groupby(["date", "scientific_title"], as_index=False).first()
+    ct = ct.groupby(["date", "title"], as_index=False).first()
     save_csv(ct, 'clinical_trials_cleaned.csv')
 
 
@@ -51,6 +52,7 @@ def clean_pubmed_yaml() -> pd.DataFrame:
                                    kind='linear',
                                    bounds_error=False)
     pubmed['id'] = pd.Series(my_extrapolate_func(func, pubmed.index.values), index=pubmed.index)
+    pubmed['id'] = pubmed['id'].astype(int)
     return pubmed
 
 
