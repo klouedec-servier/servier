@@ -12,6 +12,7 @@ import pandas as pd
 import pickle
 import string
 import yaml
+import json
 
 # import from project
 
@@ -61,6 +62,12 @@ def save_pickle(d: dict, filename: str) -> None:
         pickle.dump(d, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
+def save_json(d: dict, filename: str) -> None:
+    filename = join(DATA_SOURCE, filename)
+    with open(filename, 'w') as f:
+        json.dump(d, f)
+
+
 def remove_special_character(s: Union[str, float]) -> Union[str, float]:
     """
     Return a string removing certain escaped characters
@@ -78,6 +85,7 @@ def remove_special_character(s: Union[str, float]) -> Union[str, float]:
     return s
 
 
-def replace_punctuation(s):
+def replace_punctuation(s: str) -> str:
+    """ Replace punctuation with space """
     s = s.translate(str.maketrans(string.punctuation, ' ' * len(string.punctuation)))
     return s
