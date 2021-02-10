@@ -128,7 +128,7 @@ def drug_mentions(df: pd.DataFrame, publication_type) -> None:
         drug = row[1]["drug"]
         mentions = trie.query(drug)
         for id, journal, date in mentions:
-            match = (int(id), atccode, date)
+            match = (str(id), atccode, date)
             if journal not in res:
                 res[journal] = {}
                 res[journal][publication_type] = [match]
