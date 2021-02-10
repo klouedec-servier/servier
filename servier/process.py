@@ -14,7 +14,7 @@ import pandas as pd
 from typing import Union
 
 # import from the library
-from servier.utilities import save_csv
+from servier.utilities import save_csv, save_pickle, save_json
 
 # Inspired by https://albertauyeung.github.io/2020/06/15/python-trie.html
 class TrieNode:
@@ -150,3 +150,22 @@ def drug_mention_clinical_trial():
     """
     ct = read_csv('clinical_trials_cleaned.csv')
     drug_mentions(ct, 'clinical_trial')
+
+
+def merge_pubmed_clinical_trial():
+    """
+    Return the final json output
+    """
+    pubmed = read_pickle('pubmed_mentions.pickle')
+    ct = read_pickle('clinical_trial_mentions.pickle')
+    res = {}
+    def fill_res(d, publication_type):
+        for journal, match in d.items():
+            if journal in res:
+                res[journal][publication_type] = match
+            else:
+                res[journal] = {}
+                res[journal][publication_type] = match
+    fill_res(pubmed, 'pubmed')
+    fill_res(ct, 'clinical_trial')
+    save_json(res, 'output.json')
