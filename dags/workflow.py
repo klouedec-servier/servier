@@ -55,6 +55,8 @@ process3 = PythonOperator(task_id="merge",
 
 # task hierarchy
 
-process1 << [clean1, clean3]
-process2 << [clean2, clean3]
-process3 << [process1, process2]
+clean1 >> process1
+clean2 >> process2
+clean3 >> [process1, process2]
+process1 >> process3
+process2 >> process3
