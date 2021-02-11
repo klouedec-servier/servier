@@ -14,12 +14,12 @@ Installation
         $ docker-compose up -d
 ```
 
-To manually trigger the pipeline::
+To manually trigger the Airflow pipeline:
 
 ```bash
 	$ make run_dag
 ```
-To retrieve the output.json file ::
+To retrieve the output.json file :
 
 ```bash
 	$ make get_final_output
@@ -32,8 +32,9 @@ To retrieve the output.json file ::
 See [wikipedia](https://en.wikipedia.org/wiki/Trie) for more details. 
 
 Advantages:
-* Fast Lookup 0(1)
-* light storage
+* Fast Lookup (constant time)
+* lighter storage than a reversed based hashed solutions.
+* This implementation should be able to handle much larger data journal than given as inputs
 
 ## Final json output
 
@@ -102,5 +103,3 @@ Among other things, here is the very next things to do:
 * CI/CD
 	* Build versioned docker image with python package
 	* Update Airflow DAG on server
-
-These two tasks are paramount to 
