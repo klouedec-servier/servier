@@ -13,3 +13,6 @@ init_docker: build
 
 run_dag:
 	docker-compose run airflow-worker airflow dags trigger my_dag
+
+test:
+	pytest tests
