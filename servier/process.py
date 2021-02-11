@@ -130,10 +130,9 @@ def drug_mentions(df: pd.DataFrame, publication_type) -> None:
         for id, journal, date in mentions:
             match = (str(id), atccode, date)
             if journal not in res:
-                res[journal] = {}
-                res[journal][publication_type] = [match]
+                res[journal] = [match]
             else:
-                res[journal][publication_type].append(match)
+                res[journal].append(match)
     filename = "{}_mentions.pickle".format(publication_type)
     save_pickle(res, filename)
 
