@@ -244,3 +244,27 @@ def merge_pubmed_clinical_trial():
     fill_res(pubmed, "pubmed")
     fill_res(ct, "clinical_trial")
     save_json(res, "output.json")
+
+
+def journal_most_drug_mentioned(output: dict) -> str:
+    """
+    Get the journal (among both Medical Publications and Clinical trials)
+    that mentions the most different drugs.
+    Be careful! If two journal have the same numbers of matches, there
+    is no specific order into which one should be picked
+    """
+    journal_max = None
+    drugs_max = 0
+    for journal, global_matches in output.items():
+        drugs = set()
+        for matches in global_matches.values():
+            new_drugs = set(m[1] for m in matches)
+            drugs.update(new_drugs)
+        if len(drugs) > drugs_max:
+            journal_max = journal
+            drugs_max = len(drugs)
+    return journal_max
+
+
+
+
