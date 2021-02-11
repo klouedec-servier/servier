@@ -7,19 +7,25 @@ Here is the graph task-dependency implemented in Airflow
 
 The project requires docker and docker-compose installed
 
-Installation::
+Installation
+``` bash
 	$ make init_docker
         $ docker-compose up -d
+```
 
 To manually trigger the pipeline::
 
+```bash
 	$ make run_dag
-
+```
 To retrieve the output.json file ::
+
+```bash
 	$ make get_final_output
+```
 
 
-# TO DO List
+## TO DO List
 
 * Unit test
 	* function testing
