@@ -113,8 +113,18 @@ def drug_mentions(df: pd.DataFrame, publication_type) -> None:
     publication_type:str: either 'pubmed' or 'clinical_trial'
     schema of final json looks like:
 
-    TODO
-    {'xxx'}
+    {
+        journal_name1: {
+            "pubmed": [
+                [
+                    publication_id1,
+                    atccode1,
+                    date1
+                ],
+                ...
+            ]
+        ...
+    }
     """
     if publication_type == "pubmed":
         df = read_csv("pubmed_cleaned.csv")
@@ -155,7 +165,69 @@ def drug_mention_clinical_trial():
 
 def merge_pubmed_clinical_trial():
     """
-    Return the final json output
+    Return the final json output. The schema is:
+    {
+        "journal_name": {
+            "pubmed": [
+                [
+                    publication_id,
+                    atccode,
+                    date
+                ],
+                ...
+            ],
+            "clinical_trial": [
+                [
+                    publication_id,
+                    atccode,
+                    date
+                ],
+                ...
+            ]
+        },
+        ...
+    }
+
+    An extract of a final json output:
+    {
+        "Journal of emergency nursing": {
+            "pubmed": [
+                [
+                    "1",
+                    "A04AD",
+                    "2019-01-01"
+                ],
+                [
+                    "2",
+                    "A04AD",
+                    "2019-01-01"
+                ]
+            ],
+            "clinical_trial": [
+                [
+                    "NCT04189588",
+                    "A04AD",
+                    "2020-01-01"
+                ],
+                [
+                    "NCT01967433",
+                    "A04AD",
+                    "2020-01-01"
+                ],
+                [
+                    "NCT04237091",
+                    "A04AD",
+                    "2020-01-01"
+                ],
+                [
+                    "NCT04188184",
+                    "A01AD",
+                    "2020-04-27"
+                ]
+            ]
+        },
+        ...
+    }
     """
     pubmed = read_pickle("pubmed_mentions.pickle")
     ct = read_pickle("clinical_trial_mentions.pickle")
