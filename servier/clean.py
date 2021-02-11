@@ -21,6 +21,7 @@ def clean_clinical_trials() -> None:
     ct["title"] = ct["title"].apply(remove_special_character)
     ct["title"] = ct["title"].str.lower()
     ct["title"] = ct["title"].apply(replace_punctuation)
+    ct["journal"] = ct["journal"].apply(remove_special_character)
     ct["date"] = pd.to_datetime(ct["date"])
     ct = ct.groupby(["date", "title"], as_index=False).first()
     save_csv(ct, "clinical_trials_cleaned.csv")
