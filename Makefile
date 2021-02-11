@@ -16,3 +16,5 @@ run_dag:
 
 test:
 	pytest tests
+get_final_output:
+	docker cp servier_airflow-worker_1:/home/airflow/.local/lib/python3.6/site-packages/servier/data/output.json .
